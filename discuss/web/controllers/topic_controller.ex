@@ -37,13 +37,8 @@ defmodule Discuss.TopicController do
   end
 
   def update(conn, %{"id" => topic_id, "topic" => topic}) do
-    # first argument going into changeset is a struct
-    # the existing data
-    # second arg is the desired changes to integrate
-    # code below could also be written as:
-    # old_topic = Repo.get(Topic, topic_id)
-    # changeset = Topic.changeset(old_topic, topic)
-    changeset = Repo.get(Topic, topic_id) |> Topic.changeset(topic)
+    old_topic = Repo.get(Topic, topic_id)
+    changeset = Topic.changeset(old_topic, topic)
 
     case Repo.update(changeset) do
       {:ok, _topic} ->
@@ -52,7 +47,7 @@ defmodule Discuss.TopicController do
         |> redirect(to: topic_path(conn, :index))
 
       {:error, changeset} ->
-        render(conn, "edit.html", changeset: changeset)
+        render(conn, "edit.html", changeset: changeset, topic: old_topic)
     end
   end
 end
